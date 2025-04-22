@@ -51,6 +51,18 @@ class DiagnosisEnv(gym.Env):
         self.exams_done = set()
         return self.observed_symptoms.copy()
 
+    def set(self, diagnosis):
+        self.steps = 0
+        self.observed_symptoms = np.zeros(len(self.symptoms), dtype=int)
+        self.chosen_diagnosis, symptom_probs = self.diagnoses[diagnosis]
+
+        self.true_symptoms = np.zeros(len(self.symptoms), dtype=int)
+        for sym, prob in symptom_probs.items():
+            if np.random.rand() < prob:
+                self.true_symptoms[self.symptom_to_index[sym]] = 1
+        self.exams_done = set()
+        return self.observed_symptoms.copy()
+
     def step(self, action):
         exam = self.examinations[action]
         if exam in self.exams_done:

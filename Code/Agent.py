@@ -34,6 +34,9 @@ class ReplayBuffer:
     def __len__(self):
         return len(self.buffer)
 
+def get_epsilon(episode, epsilon_start=1.0, epsilon_end=0.05, decay_rate=0.996):
+    return max(epsilon_end, epsilon_start * (decay_rate ** episode))
+
 def train_DQN(env, episodes=500, batch_size=64, gamma=0.99, lr=0.001, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=500):
     input_dim = env.observation_space.shape[0]
     output_dim = env.action_space.n
@@ -48,11 +51,16 @@ def train_DQN(env, episodes=500, batch_size=64, gamma=0.99, lr=0.001, epsilon_st
     epsilon = epsilon_start
     target_update_freq = 10
 
+    total_rewards = []
+    correct_diagnoses = 0
+    success_rates = []
+    examinations_per_diagnosis = []
     for episode in range(episodes):
+        epsilon = get_epsilon(episode)
         state = env.reset()
         total_reward = 0
         done = False
-
+        
         for t in range(env.max_steps):
             if random.random() < epsilon:
                 action = env.action_space.sample()
@@ -82,9 +90,11 @@ def train_DQN(env, episodes=500, batch_size=64, gamma=0.99, lr=0.001, epsilon_st
         if episode % target_update_freq == 0:
             target_net.load_state_dict(policy_net.state_dict())
 
-        epsilon = max(epsilon_end, epsilon_start * (0.995 ** episode))
+        total_rewards.append(total_reward)
+        if total_reward > -1:
+            correct_diagnoses += 1
+        examinations_per_diagnosis.append(t)
 
-        if episode % 10 == 0:
-            print(f"Epsiode {episode}, Total reward: {total_reward:.2f}, Epsilon: {epsilon:.3f}")
+        success_rates.append(correct_diagnoses / (episode + 1))
 
-    return policy_net
+    return policy_net, total_rewards, success_rates, examinations_per_diagnosis
