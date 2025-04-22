@@ -72,12 +72,40 @@ symptoms_to_change = {
     "bacteria cultivation sampling": "bacteria cultivation testing",
     "cc echo": "echo",
     "cc blood analysis": "urgent blood analysis",
-    "pulse finding": "blood pressure and pulse measurement"
+    "pulse finding": "blood pressure and pulse measurement",
+    "inflammed sinuses": "inflamed sinuses",
+    "breathing difficulties": "breathing problems",
+    "t. pedis detected": "tinea pedis detected",
+    "injury to the chest": "chest injury",
+    "thickening and distortion of the nail": "nail thickening",
+    "injury to the arm": "arm injury",
+    "injury to the foot": "foot injury",
+    "beef tapeworm present": "beef tapeworm detected",
+    "painful cervical lymph nodes": "painful lymph nodes",
+    "muscles and joints pain": "muscle and joint pain",
+    "itching eye": "itchy eyes",
+    "lung findings": "abnormal lung findings",
+    "lactose intolerance detected": "lactose intolerance",
+    "loss of apetite": "loss of appetite",
+    "pork tapeworm present": "pork tapeworm detected",
+    "otorhinolaryngological findings": "orl findings",
+    "injury to the hand": "hand injury",
+    "inability to move the joint": "joint immobility",
+    "rsv and advs present": "rsv present",
+    "hemoglobin low": "low hemoglobin",
+    "sleeping difficulties": "sleeping problems",
+    "raynaud's findings": "raynauds findings",
+    "chr. fatigue syndrome": "chronic fatigue syndrome",
+    "injury to the leg": "leg injury",
+    "flatulence": "excessive flatulence",
+    "long react time": "long reaction time"
 }
 
 examinations = examinations.replace(exams_to_change)
 examinations = examinations[~examinations.isin(exams_to_remove)]
 symptoms = symptoms.replace(symptoms_to_change)
+temp_symptoms = pd.DataFrame({"symptom":["influenza b detected"],"examination 1":["serology testing testing"]})
+symptoms = pd.concat([symptoms, temp_symptoms], ignore_index=True)
 
 url = "https://projecthospital.shoutwiki.com/wiki/Diagnosis"
 
@@ -109,7 +137,9 @@ for index, row in diagnosis_emergency.iterrows():
     data = {}
     for index2, row2 in table.iterrows():
         symptom = remove_non_ascii(row2["Symptom"].lower())
-        probability = row2["Probability"]
+        if symptom == "nasal sneezing":
+            symptom = "sneezing"
+        probability = int(row2["Probability"]) / 100
         data[symptom] = probability
     diagnosis_emergency.loc[index, "Symptoms"] = [data]
     time.sleep(random.uniform(1,3))
