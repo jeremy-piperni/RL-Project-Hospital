@@ -150,7 +150,7 @@ response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
 
 tables = soup.find_all('table')
-"""
+
 data = []
 for row in tables[0].find_all('tr')[1:]:
     first_td = row.find('td')
@@ -248,7 +248,6 @@ diagnosis_gen_surgery = diagnosis_gen_surgery.drop(columns=["Link"])
 new_path = os.path.join(script_dir, os.pardir, "Data", "Gen_Surgery_Diagnosis.csv")
 new_path = os.path.abspath(new_path)
 diagnosis_gen_surgery.to_csv(new_path, index=False)
-"""
 
 tables = soup.find_all('table')
 

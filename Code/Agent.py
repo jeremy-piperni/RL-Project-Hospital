@@ -42,11 +42,7 @@ def get_epsilon(episode, total_episodes, epsilon_start=1.0, epsilon_end=0.05):
         epsilon = epsilon_end
     return epsilon
 
-#def get_epsilon(episode, epsilon_start=1.0, epsilon_end=0.05, decay_rate=0.996):
-    #return max(epsilon_end, epsilon_start * (decay_rate ** episode))
-
-
-def train_DQN(env, episodes=500, batch_size=64, gamma=0.99, lr=0.001, epsilon_start=1.0, epsilon_end=0.05, epsilon_decay=500):
+def train_DQN(env, episodes=500, batch_size=64, gamma=0.99, lr=0.001, epsilon_start=1.0, epsilon_end=0.05):
     input_dim = env.observation_space.shape[0]
     output_dim = env.action_space.n
 
